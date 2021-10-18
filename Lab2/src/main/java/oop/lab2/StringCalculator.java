@@ -1,7 +1,5 @@
 package oop.lab2;
 
-
-import java.util.ArrayList;
 import java.util.LinkedList;
 
 public class StringCalculator
@@ -10,25 +8,23 @@ public class StringCalculator
     {
         int sum = 0, i = 0;
         StringBuilder number = new StringBuilder();
-        ArrayList<Character> delimiters = new ArrayList<>(2);
+        LinkedList<String> delimiters;
         LinkedList<Integer> negative_numbers = new LinkedList<>();
         if (numbers.length() != 0)
         {
             int num;
-            if (numbers.startsWith("//"))
+            if ((delimiters = Find_Delimiter(numbers)).size() == 0)
             {
-                delimiters.add(numbers.charAt(2));
-                i = 4;
+                delimiters.add(",");
+                delimiters.add("\n");
             }
-            else
-            {
-                delimiters.add(',');
-                delimiters.add('\n');
-            }
+            else {i = Integer.parseInt(delimiters.get(delimiters.size() - 1)); delimiters.removeLast();}
+
             for (; i < numbers.length(); i++)
             {
-                if (delimiters.contains(numbers.charAt(i)))
+                if (delimiters.getFirst().startsWith(String.valueOf(numbers.charAt(i))) || delimiters.getLast().startsWith(String.valueOf(numbers.charAt(i))))
                 {
+                    i = pass_delimiter(i, delimiters.get(0));
                     num = Integer.parseInt(number.toString());
                     if (num <= 1000) sum += num;
                     if (num < 0) negative_numbers.add(num);
@@ -50,5 +46,43 @@ public class StringCalculator
             throw new IllegalArgumentException(Error_Message);
         }
         return sum;
+    }
+
+    public static int pass_delimiter(int place, String delimiter)
+    {
+        place += delimiter.length();
+        return place - 1;
+    }
+
+    public static LinkedList<String> Find_Delimiter(String numbers)
+    {
+        StringBuilder Delimiter_Buffer = new StringBuilder();
+        LinkedList<String> delimiter = new LinkedList<>();
+        if (numbers.startsWith("//["))
+        {
+            for (int i = 3; i < numbers.length(); i++)
+            {
+                if (numbers.charAt(i) != ']' && numbers.charAt(i) != '[')
+                {
+                    Delimiter_Buffer.append(numbers.charAt(i));
+                }
+                else if (numbers.charAt(i) != '\n')
+                {
+                    delimiter.add(String.valueOf(Delimiter_Buffer));
+                    Delimiter_Buffer.delete(0, Delimiter_Buffer.length());
+                }
+                if (numbers.charAt(i) == '\n')
+                {
+                    delimiter.add(String.valueOf(i + 1));
+                    return delimiter;
+                }
+            }
+        }
+        else if (numbers.startsWith("//"))
+        {
+            delimiter.add(String.valueOf(numbers.charAt(2)));
+            delimiter.add(String.valueOf(4));
+        }
+        return delimiter;
     }
 }

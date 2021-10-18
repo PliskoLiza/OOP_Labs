@@ -47,5 +47,12 @@ public class StringCalculatorTest
     public void Test6()
     {
         Assert.assertEquals(2, StringCalculator.Add("1001,2"));
+        Assert.assertEquals(154, StringCalculator.Add("123\n2,4\n1001,5,20"));
+    }
+
+    @Test
+    public void Test7()
+    {
+        Assert.assertEquals(6, StringCalculator.Add("//[***]\n1***2***3"));
     }
 }
