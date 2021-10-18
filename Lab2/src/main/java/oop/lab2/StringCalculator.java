@@ -11,8 +11,15 @@ public class StringCalculator
         {
             for (int i = 0; i < numbers.length(); i++)
             {
-                if (numbers.charAt(i) != ',') {number.append(numbers.charAt(i));}
-                else {sum += Integer.parseInt(number.toString()); number.delete(0, number.length());}
+                if (numbers.charAt(i) == ',' || numbers.charAt(i) == '\n')
+                {
+                    sum += Integer.parseInt(number.toString());
+                    number.delete(0, number.length());
+                }
+                else
+                {
+                    number.append(numbers.charAt(i));
+                }
             }
             sum += Integer.parseInt(number.toString());
         }
