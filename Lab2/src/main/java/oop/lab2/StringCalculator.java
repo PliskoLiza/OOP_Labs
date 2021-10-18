@@ -30,7 +30,7 @@ public class StringCalculator
                 if (delimiters.contains(numbers.charAt(i)))
                 {
                     num = Integer.parseInt(number.toString());
-                    sum += num;
+                    if (num <= 1000) sum += num;
                     if (num < 0) negative_numbers.add(num);
                     number.delete(0, number.length());
                 }
@@ -38,7 +38,7 @@ public class StringCalculator
             }
             num = Integer.parseInt(number.toString());
             if (num < 0) negative_numbers.add(num);
-            sum += num;
+            if (num <= 1000) sum += num;
         }
         if (negative_numbers.size() != 0)
         {
