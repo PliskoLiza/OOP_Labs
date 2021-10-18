@@ -27,4 +27,15 @@ public class StringCalculatorTest
     {
         Assert.assertEquals(3, StringCalculator.Add("//;\n1;2"));
     }
+    @Test
+    public void Test5() throws IllegalArgumentException
+    {
+        try {
+            StringCalculator.Add("-123,2\n-4,5,-20");
+            Assert.fail("Expected IllegalArgumentException");
+        } catch (IllegalArgumentException thrown)
+        {
+            Assert.assertEquals("Negatives not allowed:  -123 -4 -20", thrown.getMessage());
+        }
+    }
 }
