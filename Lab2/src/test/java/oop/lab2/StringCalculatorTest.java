@@ -3,6 +3,8 @@ package oop.lab2;
 import org.junit.Assert;
 import org.junit.Test;
 
+import java.nio.file.SecureDirectoryStream;
+
 public class StringCalculatorTest
 {
     @Test
@@ -54,5 +56,11 @@ public class StringCalculatorTest
     public void Test7()
     {
         Assert.assertEquals(6, StringCalculator.Add("//[***]\n1***2***3"));
+    }
+
+    @Test
+    public void Test8()
+    {
+        Assert.assertEquals(10, StringCalculator.Add("//[*][**][**&*]\n1**2*3**&*4"));
     }
 }
