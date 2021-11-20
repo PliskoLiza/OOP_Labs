@@ -4,16 +4,17 @@ import java.util.LinkedList;
 
 public class StringCalculator
 {
-    public static int Add(String numbers)
+    public static float Add(String numbers)
     {
-        int sum = 0, i = 0;
+        float sum = 0;
+        int i = 0;
         StringBuilder number = new StringBuilder();
         LinkedList<String> delimiters;
-        LinkedList<Integer> negative_numbers = new LinkedList<>();
+        LinkedList<Float> negative_numbers = new LinkedList<>();
         String Found_delimiter;
         if (numbers.length() != 0)
         {
-            int num;
+            float num;
             if ((delimiters = Find_Delimiter(numbers)).size() == 0)
             {
                 delimiters.add(",");
@@ -26,21 +27,21 @@ public class StringCalculator
                 if (!(Found_delimiter = recognize_delimiter(delimiters, numbers, i)).equals(""))
                 {
                     i = pass_delimiter(i, Found_delimiter);
-                    num = Integer.parseInt(number.toString());
+                    num = Float.parseFloat(number.toString());
                     if (num <= 1000) sum += num;
                     if (num < 0) negative_numbers.add(num);
                     number.delete(0, number.length());
                 }
                 else number.append(numbers.charAt(i));
             }
-            num = Integer.parseInt(number.toString());
+            num = Float.parseFloat(number.toString());
             if (num < 0) negative_numbers.add(num);
             if (num <= 1000) sum += num;
         }
         if (negative_numbers.size() != 0)
         {
             String Error_Message = "Negatives not allowed: ";
-            for (Integer negatives: negative_numbers)
+            for (Float negatives: negative_numbers)
             {
                 Error_Message = String.join(" ", Error_Message, negatives.toString());
             }
@@ -94,7 +95,7 @@ public class StringCalculator
             {
                 if (numbers.charAt(i) == '[') Delimiter_Buffer.delete(0, Delimiter_Buffer.length());
                 else if (numbers.charAt(i) == ']') delimiter.add(String.valueOf(Delimiter_Buffer));
-                else if (numbers.charAt(i) != '\n') Delimiter_Buffer.append(numbers.charAt(i));
+                else if (numbers.charAt(i) != '\n' || (numbers.charAt(i) == '\n') && numbers.charAt(i - 1) != ']') Delimiter_Buffer.append(numbers.charAt(i));
                 else
                 {
                     delimiter.add(String.valueOf(i + 1));
