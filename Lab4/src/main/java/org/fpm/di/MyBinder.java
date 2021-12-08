@@ -10,7 +10,7 @@ public class MyBinder implements Binder{
     protected HashMap<Class<?>, ArrayList<Constructor<?>>> necessary_constructors;
     protected HashMap<Class<?>, Object> Initialized_Singletons;
     protected HashMap<Class<?>, ArrayList<Constructor<?>>> Uninitialized_Singletons;
-    protected HashMap<Class<?>, ArrayList<Constructor<?>>> return_instead_of;
+    protected HashMap<Class<?>, Class<?>> return_instead_of;
 
     MyBinder()
     {
@@ -20,7 +20,7 @@ public class MyBinder implements Binder{
         return_instead_of = new HashMap<>();
     }
 
-    private <T> void Get_Constructors(Class<?> clazz, ArrayList<Constructor<?>> constructors_list)
+    protected <T>  void Get_Constructors(Class<?> clazz, ArrayList<Constructor<?>> constructors_list)
     {
         Constructor<?>[] constructors = clazz.getConstructors();
         if (constructors.length == 1) constructors_list.add(constructors[0]);
@@ -67,10 +67,10 @@ public class MyBinder implements Binder{
 
     @Override
     public <T> void bind(Class<T> clazz, Class<? extends T> implementation) {
-        ArrayList<Constructor<?>> constructors_list = new ArrayList<>();
+      //  ArrayList<Constructor<?>> constructors_list = new ArrayList<>();
         cleanup(clazz);
-        Get_Constructors(clazz, constructors_list);
-        return_instead_of.put(clazz, constructors_list);
+      //  Get_Constructors(clazz, constructors_list);
+        return_instead_of.put(clazz, implementation);
     }
 
     @Override

@@ -1,8 +1,8 @@
 package org.fpm.di;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.lang.reflect.*;
+import java.util.Arrays;
 
 public class MyContainer implements Container {
  //   HashMap<Class<T>, > necessary_classes = new HashMap();
@@ -27,9 +27,12 @@ public class MyContainer implements Container {
 
     private Object return_instead(Class<?> clazz)
     {
-        ArrayList<Constructor<?>> constructors_list = binder.return_instead_of.get(clazz);
-        Object appropriate_object = new Object();
-        return catching_exceptions_in_recursion(clazz, constructors_list, appropriate_object);
+       // ArrayList<Constructor<?>> constructors_list = (ArrayList<Constructor<?>>) Arrays.asList(binder.return_instead_of.get(clazz).getConstructors());
+        ArrayList<Constructor<?>> constructors_list = new ArrayList<>();
+        return getComponent(binder.return_instead_of.get(clazz));
+     //   binder.Get_Constructors(binder.return_instead_of.get(clazz), constructors_list);
+      //  Object appropriate_object = new Object();
+      //  return catching_exceptions_in_recursion(constructors_list, appropriate_object);
     }
 
     private Object return_init_singleton(Class<?> clazz)
@@ -40,38 +43,42 @@ public class MyContainer implements Container {
     private Object return_uninit_singleton(Class<?> clazz)
     {
         ArrayList<Constructor<?>> constructors_list = binder.Uninitialized_Singletons.get(clazz);
+        binder.Uninitialized_Singletons.remove(clazz);
         Object appropriate_object = new Object();
-        return catching_exceptions_in_recursion(clazz, constructors_list, appropriate_object);
+        binder.Initialized_Singletons.put(clazz, catching_exceptions_in_recursion(constructors_list, appropriate_object));
+        return binder.Initialized_Singletons.get(clazz);
     }
 
     private Object return_object(Class<?> clazz)
     {
         ArrayList<Constructor<?>> constructors_list = binder.necessary_constructors.get(clazz);
         Object appropriate_object = new Object();
-        return catching_exceptions_in_recursion(clazz, constructors_list, appropriate_object);
+        return catching_exceptions_in_recursion(constructors_list, appropriate_object);
     }
 
-    private Object catching_exceptions_in_recursion(Class<?> clazz, ArrayList<Constructor<?>> constructors_list, Object appropriate_object)
+
+    private Object catching_exceptions_in_recursion(ArrayList<Constructor<?>> constructors_list, Object appropriate_object)
     {
         for (Constructor<?> constructor: constructors_list)
         {
             try {
-                appropriate_object = find_no_arguments(clazz, constructor);
+                appropriate_object = find_no_arguments(constructor);
             } catch (InvocationTargetException | InstantiationException | IllegalAccessException e) {throw new RuntimeException();}
         }
         return appropriate_object;
     }
 
-    private <T> Object find_no_arguments(Class<T> clazz, Constructor<?> constructor) throws InvocationTargetException, InstantiationException, IllegalAccessException
+    private <T> Object find_no_arguments(Constructor<?> constructor) throws InvocationTargetException, InstantiationException, IllegalAccessException
     {
         if (constructor.getParameterCount() == 0) return constructor.newInstance();
         else
         {
             Object[] necessary_objects = new Object[constructor.getParameterCount()];
 
-            for (int i = 0; i < constructor.getParameterCount(); i++)
+            Class<?>[] parameters_types = constructor.getParameterTypes();
+            for (int i = 0; i < parameters_types.length; i++)
             {
-                necessary_objects[i] = find_no_arguments(constructor.getParameterTypes()[i], constructor);
+                necessary_objects[i] = getComponent(parameters_types[i]);
             }
             return constructor.newInstance(necessary_objects);
         }
