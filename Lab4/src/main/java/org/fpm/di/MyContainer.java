@@ -2,12 +2,8 @@ package org.fpm.di;
 
 import java.util.ArrayList;
 import java.lang.reflect.*;
-import java.util.Arrays;
 
 public class MyContainer implements Container {
- //   HashMap<Class<T>, > necessary_classes = new HashMap();
-
-    //проверка существования Singleton
     MyBinder binder;
 
     MyContainer(MyBinder b) {binder = b;}
@@ -27,12 +23,7 @@ public class MyContainer implements Container {
 
     private Object return_instead(Class<?> clazz)
     {
-       // ArrayList<Constructor<?>> constructors_list = (ArrayList<Constructor<?>>) Arrays.asList(binder.return_instead_of.get(clazz).getConstructors());
-        ArrayList<Constructor<?>> constructors_list = new ArrayList<>();
         return getComponent(binder.return_instead_of.get(clazz));
-     //   binder.Get_Constructors(binder.return_instead_of.get(clazz), constructors_list);
-      //  Object appropriate_object = new Object();
-      //  return catching_exceptions_in_recursion(constructors_list, appropriate_object);
     }
 
     private Object return_init_singleton(Class<?> clazz)
@@ -68,7 +59,7 @@ public class MyContainer implements Container {
         return appropriate_object;
     }
 
-    private <T> Object find_no_arguments(Constructor<?> constructor) throws InvocationTargetException, InstantiationException, IllegalAccessException
+    private Object find_no_arguments(Constructor<?> constructor) throws InvocationTargetException, InstantiationException, IllegalAccessException
     {
         if (constructor.getParameterCount() == 0) return constructor.newInstance();
         else

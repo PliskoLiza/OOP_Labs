@@ -20,7 +20,7 @@ public class MyBinder implements Binder{
         return_instead_of = new HashMap<>();
     }
 
-    protected <T>  void Get_Constructors(Class<?> clazz, ArrayList<Constructor<?>> constructors_list)
+    protected void Get_Constructors(Class<?> clazz, ArrayList<Constructor<?>> constructors_list)
     {
         Constructor<?>[] constructors = clazz.getConstructors();
         if (constructors.length == 1) constructors_list.add(constructors[0]);
@@ -43,7 +43,7 @@ public class MyBinder implements Binder{
         }
     }
 
-    protected <T> void Get_Singleton(Class<?> clazz, ArrayList<Constructor<?>> constructors_list)
+    protected void Get_Singleton(Class<?> clazz, ArrayList<Constructor<?>> constructors_list)
     {
         if (!Uninitialized_Singletons.containsKey(clazz) && !Initialized_Singletons.containsKey(clazz))
         {
@@ -67,15 +67,12 @@ public class MyBinder implements Binder{
 
     @Override
     public <T> void bind(Class<T> clazz, Class<? extends T> implementation) {
-      //  ArrayList<Constructor<?>> constructors_list = new ArrayList<>();
         cleanup(clazz);
-      //  Get_Constructors(clazz, constructors_list);
         return_instead_of.put(clazz, implementation);
     }
 
     @Override
     public <T> void bind(Class<T> clazz, T instance) {
-      //дают класс и объект, который надо всегда возвращать при запросе этого класса
         cleanup(clazz);
         Initialized_Singletons.put(clazz, instance);
     }
