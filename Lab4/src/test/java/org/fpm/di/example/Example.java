@@ -45,4 +45,11 @@ public class Example {
         final UseA hasADependency = container.getComponent(UseA.class);
         assertSame(hasADependency.getDependency(), container.getComponent(B.class));
     }
+
+    //My tests
+    @Test
+    public void ShouldBeError()
+    {
+
+    }
 }

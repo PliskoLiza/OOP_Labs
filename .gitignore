@@ -1,9 +1,6 @@
 #Ignore all IntelliJ files
 */build
-*/gradle
-*/*.gradle
-*/gradlew
-*/gradlew.bat
+*/.gradle
 */.idea
 */out/
 */*.iml
