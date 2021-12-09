@@ -3,21 +3,23 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 import java.lang.reflect.*;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.Map;
 
 public class MyBinder implements Binder{
 
-    protected HashMap<Class<?>, ArrayList<Constructor<?>>> necessary_constructors;
-    protected HashMap<Class<?>, Object> initialized_singletons;
-    protected HashMap<Class<?>, ArrayList<Constructor<?>>> uninitialized_singletons;
-    protected HashMap<Class<?>, Class<?>> return_instead_of;
+    protected Map<Class<?>, ArrayList<Constructor<?>>> necessary_constructors;
+    protected Map<Class<?>, Object> initialized_singletons;
+    protected Map<Class<?>, ArrayList<Constructor<?>>> uninitialized_singletons;
+    protected Map<Class<?>, Class<?>> return_instead_of;
 
     public MyBinder()
     {
-        necessary_constructors = new HashMap<>();
-        initialized_singletons = new HashMap<>();
-        uninitialized_singletons = new HashMap<>();
-        return_instead_of = new HashMap<>();
+        necessary_constructors = Collections.synchronizedMap(new HashMap<>());
+        initialized_singletons = Collections.synchronizedMap(new HashMap<>());
+        uninitialized_singletons = Collections.synchronizedMap(new HashMap<>());
+        return_instead_of = Collections.synchronizedMap(new HashMap<>());
     }
 
     protected void Get_Constructors(Class<?> clazz, ArrayList<Constructor<?>> constructors_list)
