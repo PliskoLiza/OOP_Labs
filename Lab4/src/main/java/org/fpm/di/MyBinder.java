@@ -9,10 +9,60 @@ import java.util.Map;
 
 public class MyBinder implements Binder{
 
-    protected Map<Class<?>, ArrayList<Constructor<?>>> necessary_constructors;
-    protected Map<Class<?>, Object> initialized_singletons;
-    protected Map<Class<?>, ArrayList<Constructor<?>>> uninitialized_singletons;
-    protected Map<Class<?>, Class<?>> return_instead_of;
+    private final Map<Class<?>, ArrayList<Constructor<?>>> necessary_constructors;
+    private final Map<Class<?>, Object> initialized_singletons;
+    private final Map<Class<?>, ArrayList<Constructor<?>>> uninitialized_singletons;
+    private final Map<Class<?>, Class<?>> return_instead_of;
+
+    protected ArrayList<Constructor<?>> get_necessary_constructors(Class<?> clazz)
+    {
+        return necessary_constructors.get(clazz);
+    }
+
+    protected boolean contains_necessary_constructors(Class<?> clazz)
+    {
+        return necessary_constructors.containsKey(clazz);
+    }
+
+    protected Object get_initialized_singletons(Class<?> clazz)
+    {
+        return initialized_singletons.get(clazz);
+    }
+
+    protected boolean contains_initialized_singletons(Class<?> clazz)
+    {
+        return initialized_singletons.containsKey(clazz);
+    }
+
+    protected void put_to_initialized_singletons(Class<?> clazz, Object object)
+    {
+        initialized_singletons.put(clazz, object);
+    }
+
+    protected ArrayList<Constructor<?>> get_uninitialized_singletons(Class<?> clazz)
+    {
+        return uninitialized_singletons.get(clazz);
+    }
+
+    protected boolean contains_uninitialized_singletons(Class<?> clazz)
+    {
+        return uninitialized_singletons.containsKey(clazz);
+    }
+
+    protected void remove_from_uninitialized_singletons(Class<?> clazz)
+    {
+        uninitialized_singletons.remove(clazz);
+    }
+
+    protected Class<?> get_return_instead(Class<?> clazz)
+    {
+        return return_instead_of.get(clazz);
+    }
+
+    protected boolean contains_return_instead(Class<?> clazz)
+    {
+        return return_instead_of.containsKey(clazz);
+    }
 
     public MyBinder()
     {
