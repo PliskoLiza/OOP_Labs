@@ -1,20 +1,20 @@
 package org.fpm.di.example;
 
-import org.fpm.di.Container;
-import org.fpm.di.Environment;
-import org.fpm.di.MyEnvironment;
+import org.fpm.di.*;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import static org.junit.Assert.assertNotSame;
-import static org.junit.Assert.assertSame;
+import static org.junit.Assert.*;
 
 public class Example {
 
     private Container container;
+    private MyBinder binder;
 
     @Before
     public void setUp() {
+        binder = new MyBinder();
         Environment env = new MyEnvironment();
         container = env.configure(new MyConfiguration());
     }
@@ -48,8 +48,64 @@ public class Example {
 
     //My tests
     @Test
-    public void ShouldBeError()
+    public void ShouldBeConstructorError()
     {
+        try
+        {
+            binder.bind(NoSuitableConstructors.class);
+            Assert.fail("Expected RuntimeException");
+        }catch (RuntimeException thrown)
+        {
+            Assert.assertEquals("No suitable constructors found", thrown.getMessage());
+        }
+    }
 
+    @Test
+    public void ShouldBeUnknownClass()
+    {
+        try {
+            container.getComponent(NoSuitableConstructors.class);
+            Assert.fail("Expected RuntimeException");
+        }catch (RuntimeException thrown)
+        {
+            Assert.assertEquals("Unknown class", thrown.getMessage());
+        }
+    }
+
+    @Test
+    public void ShouldBeNullArgument()
+    {
+        try {
+            binder.bind(null);
+            Assert.fail("Expected RuntimeException");
+        }catch (RuntimeException thrown)
+        {
+            Assert.assertEquals("Null argument", thrown.getMessage());
+        }
+
+        try {
+            binder.bind((Class<A>) null, (Class<B>) null);
+            Assert.fail("Expected RuntimeException");
+        }catch (RuntimeException thrown)
+        {
+            Assert.assertEquals("Null argument", thrown.getMessage());
+        }
+
+        try {
+            binder.bind(null, (Object) null);
+            Assert.fail("Expected RuntimeException");
+        }catch (RuntimeException thrown)
+        {
+            Assert.assertEquals("Null argument", thrown.getMessage());
+        }
+    }
+
+    @Test
+    public void ShouldBeZeroParameters()
+    {
+        MyContainer container_test = new MyContainer(binder);
+        binder.bind(NoInject.class);
+        assertTrue(container_test.getComponent(NoInject.class).isCorrect());
+        container_test.getComponent(NoInject.class);
     }
 }

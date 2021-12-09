@@ -8,15 +8,15 @@ import java.util.HashMap;
 public class MyBinder implements Binder{
 
     protected HashMap<Class<?>, ArrayList<Constructor<?>>> necessary_constructors;
-    protected HashMap<Class<?>, Object> Initialized_Singletons;
-    protected HashMap<Class<?>, ArrayList<Constructor<?>>> Uninitialized_Singletons;
+    protected HashMap<Class<?>, Object> initialized_singletons;
+    protected HashMap<Class<?>, ArrayList<Constructor<?>>> uninitialized_singletons;
     protected HashMap<Class<?>, Class<?>> return_instead_of;
 
-    MyBinder()
+    public MyBinder()
     {
         necessary_constructors = new HashMap<>();
-        Initialized_Singletons = new HashMap<>();
-        Uninitialized_Singletons = new HashMap<>();
+        initialized_singletons = new HashMap<>();
+        uninitialized_singletons = new HashMap<>();
         return_instead_of = new HashMap<>();
     }
 
@@ -39,25 +39,24 @@ public class MyBinder implements Binder{
                     break;
                 }
             }
-            if (constructors_list.size() == 0) throw new RuntimeException();
-        }
-    }
-
-    protected void Get_Singleton(Class<?> clazz, ArrayList<Constructor<?>> constructors_list)
-    {
-        if (!Uninitialized_Singletons.containsKey(clazz) && !Initialized_Singletons.containsKey(clazz))
-        {
-            Get_Constructors(clazz, constructors_list);
-            Uninitialized_Singletons.put(clazz, constructors_list);
+            if (constructors_list.size() == 0) throw new RuntimeException("No suitable constructors found");
         }
     }
 
     @Override
     public <T> void bind(Class<T> clazz) {
+        if (clazz == null) throw new RuntimeException("Null argument");
         ArrayList<Constructor<?>> constructors_list = new ArrayList<>();
         cleanup(clazz);
 
-        if (clazz.isAnnotationPresent(Singleton.class)) Get_Singleton(clazz, constructors_list);
+        if (clazz.isAnnotationPresent(Singleton.class))
+        {
+            if (!uninitialized_singletons.containsKey(clazz) && !initialized_singletons.containsKey(clazz))
+            {
+                Get_Constructors(clazz, constructors_list);
+                uninitialized_singletons.put(clazz, constructors_list);
+            }
+        }
         else
         {
             Get_Constructors(clazz, constructors_list);
@@ -67,20 +66,24 @@ public class MyBinder implements Binder{
 
     @Override
     public <T> void bind(Class<T> clazz, Class<? extends T> implementation) {
+        if (clazz == null) throw new RuntimeException("Null argument");
+        if (implementation == null) throw new RuntimeException("Null argument");
         cleanup(clazz);
         return_instead_of.put(clazz, implementation);
     }
 
     @Override
     public <T> void bind(Class<T> clazz, T instance) {
+        if (clazz == null) throw new RuntimeException("Null argument");
+        if (instance == null) throw new RuntimeException("Null argument");
         cleanup(clazz);
-        Initialized_Singletons.put(clazz, instance);
+        initialized_singletons.put(clazz, instance);
     }
 
     private void cleanup(Class<?> clazz)
     {
-        Uninitialized_Singletons.remove(clazz);
-        Initialized_Singletons.remove(clazz);
+        uninitialized_singletons.remove(clazz);
+        initialized_singletons.remove(clazz);
         necessary_constructors.remove(clazz);
         return_instead_of.remove(clazz);
     }
